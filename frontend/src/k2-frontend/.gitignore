@@ -25,6 +25,3 @@ dist-ssr
 *.sw?
 
 .vscode
-
-.env.development.local
-.env.production
