@@ -1,0 +1,15 @@
+version: '3'
+services:
+  golang:
+    build: ./backend
+    container_name: 'k2-backend'
+    tty: true
+    ports:
+      - "60001:60001"
+  nginx:
+    container_name: 'k2-frontend'
+    build: ./http
+    ports:
+      - "60000:80"
+    depends_on:
+      - golang

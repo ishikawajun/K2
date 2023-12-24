@@ -1,0 +1,256 @@
+openapi: 3.0.3
+info:
+  title: K2-BackEnd API
+  description: K2のバックエンドAPI
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /budget:
+    get:
+      summary: Get budget data from local DB
+      description: Return  an array of budget model
+      parameters:
+      - name: year
+        in: query
+        description: budget year
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: month
+        in: query
+        description: budget month
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A JSON array of budget model
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                - account: book
+                  amount: 10000
+                - account: eart
+                  amount: 3000
+                items:
+                  $ref: '#/components/schemas/Budget'
+                x-content-type: application/json
+    post:
+      summary: Create a new budget record
+      description: Create a new budget record
+      parameters:
+      - name: year
+        in: query
+        description: performance year
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: month
+        in: query
+        description: performance month
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: budget record to create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDitail'
+            example:
+            - year: 2023
+              month: 1
+              account: eat
+              amount: 10000
+            - year: 2023
+              month: 1
+              account: book
+              amount: 3000
+      responses:
+        "201":
+          description: CREATED
+  /performance:
+    get:
+      summary: Get performance data from local DB
+      description: Return  an array of performance model
+      parameters:
+      - name: year
+        in: query
+        description: performance year
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: month
+        in: query
+        description: performance month
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A JSON array of performance model
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                - account: book
+                  amount: 10000
+                  balance: 5000
+                - account: eart
+                  amount: 3000
+                  balance: 100
+                items:
+                  $ref: '#/components/schemas/Performance'
+                x-content-type: application/json
+    post:
+      summary: Create a new performance record
+      description: Create a new performance record
+      parameters:
+      - name: year
+        in: query
+        description: performance year
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: month
+        in: query
+        description: performance month
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: performance record to create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDitail'
+            example:
+            - year: 2023
+              month: 1
+              account: eat
+              amount: 10000
+            - year: 2023
+              month: 1
+              account: book
+              amount: 3000
+      responses:
+        "201":
+          description: CREATED
+  /aggregation:
+    get:
+      summary: Get aggregation data from local DB
+      description: Return  an array of aggregation model
+      parameters:
+      - name: year
+        in: query
+        description: aggregation year
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: month
+        in: query
+        description: aggregation month
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A JSON array of aggregation model
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                  budget: 100000
+                  consum: 95000
+                  balance: 5000
+                items:
+                  $ref: '#/components/schemas/Aggregation'
+                x-content-type: application/json
+components:
+  schemas:
+    Budget:
+      required:
+      - account
+      - amount
+      type: object
+      properties:
+        account:
+          type: string
+        amount:
+          type: integer
+          format: int64
+    Performance:
+      required:
+      - account
+      - amount
+      type: object
+      properties:
+        account:
+          type: string
+        amount:
+          type: integer
+          format: int64
+        balance:
+          type: integer
+          format: int64
+    Aggregation:
+      required:
+      - balance
+      - budget
+      - consum
+      type: object
+      properties:
+        budget:
+          type: integer
+          format: int64
+        consum:
+          type: integer
+          format: int64
+        balance:
+          type: integer
+          format: int64
+    PostDitail:
+      type: array
+      items:
+        $ref: '#/components/schemas/PostDitail_inner'
+    PostDitail_inner:
+      required:
+      - account
+      - month
+      - year
+      type: object
+      properties:
+        year:
+          type: string
+        month:
+          type: string
+        account:
+          type: string
+        amount:
+          type: integer
+          format: int64

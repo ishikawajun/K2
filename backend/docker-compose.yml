@@ -1,0 +1,13 @@
+version: '3'
+services:
+  golang:
+    restart: always
+    build: .
+    container_name: 'k2-backend'
+    tty: true
+    ports:
+      - "60001:60001"
+    volumes:
+      - ${SRC_PATH}:/root/src
+    env_file:
+      - .env
