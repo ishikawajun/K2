@@ -14,3 +14,4 @@ ENV TZ JST-9
 ENV TERM xterm
 
 WORKDIR /app/src
+EXPOSE 5173

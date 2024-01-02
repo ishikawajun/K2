@@ -11,7 +11,7 @@
                 <RouterLink :to="{ name: 'edit' }">Edit</RouterLink>
             </li>
             <li class="mr-4 hover:underline md:mr-6">
-                <RouterLink :to="{ name: 'calcu' }">Edit</RouterLink>
+                <RouterLink :to="{ name: 'calcu' }">Calcu</RouterLink>
             </li>
         </ul>
     </footer>

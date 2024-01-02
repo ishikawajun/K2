@@ -34,7 +34,7 @@ accountMasterStore.getAccountMastergetFunc()
 
 watchEffect(
     (): void => {
-        if (year.value >= thisYear && month.value > thisMonth) {
+        if (year.value + month.value >= thisYear + thisMonth) {
             const accountMaster = accountMasterStore.accountMaster
             budgetStore.setFuturData(accountMaster)
         } else {
