@@ -9,7 +9,7 @@ const year = ref(nowDate.getFullYear())
 const month = ref(nowDate.getMonth() + 1)
 
 const yearList: number[] = []
-for (let i = 5; i > 0; i--) {
+for (let i = year.value - 2019 ; i > 0; i--) {
     yearList.push(year.value - i)
 }
 yearList.push(year.value, year.value + 1)
