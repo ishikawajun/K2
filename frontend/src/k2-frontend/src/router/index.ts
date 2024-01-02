@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { START_LOCATION } from 'vue-router'
 import Home from '../components/pages/Home.vue'
 import Edit from '../components/pages/Edit.vue'
 import Calcu from '../components/pages/Calcu.vue'
@@ -13,12 +14,18 @@ const routerSettings: RouteRecordRaw[] = [
     {
         path: "/edit",
         name: "edit",
-        component: Edit
+        component: Edit,
+        beforeEnter: (to, from) => {
+            if (from === START_LOCATION) return "/"
+          },
     },
     {
         path: "/calcu",
         name: "calcu",
-        component: Calcu
+        component: Calcu,
+        beforeEnter: (to, from) => {
+            if (from === START_LOCATION) return "/"
+          },
     }
 ]
 
