@@ -57,10 +57,12 @@ const budgetAmount = ref(0)
 if (props.isEdit) {
     watchEffect((): void => {
         let aggre = 0
+        if(editBudget.value) {
         for (const item of editBudget.value) {
             aggre += Number(item.amount)
         }
         budgetAmount.value = aggre
+    }
     }
     )
 }
