@@ -5,14 +5,17 @@ import { date } from '../../stores/date'
 const dateStore = date()
 
 const nowDate = new Date()
-const year = ref(nowDate.getFullYear())
-const month = ref(nowDate.getMonth() + 1)
+const thisYear = nowDate.getFullYear()
+const thisMonth = nowDate.getMonth() + 1
+
+const year = dateStore.year
+const month = dateStore.month
 
 const yearList: number[] = []
-for (let i = year.value - 2019 ; i > 0; i--) {
-    yearList.push(year.value - i)
+for (let i = thisYear - 2019 ; i > 0; i--) {
+    yearList.push(thisYear - i)
 }
-yearList.push(year.value, year.value + 1)
+yearList.push(thisYear, thisYear + 1)
 
 const monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
@@ -27,7 +30,7 @@ const changeMonth = (selectedMonth: number): void => {
 </script>
 
 <template>
-    <select v-model="month" @change="changeMonth(month)">
+    <select v-model="month" @change="changeMonth(month)" >
         <option v-for="monthFor in monthList" :key="monthFor" :value="monthFor">{{ monthFor }}月</option>
     </select>
     <select v-model="year" @change="changeYear(year)">
