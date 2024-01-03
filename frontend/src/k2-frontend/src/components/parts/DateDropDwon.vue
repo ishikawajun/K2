@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { date } from '../../stores/date'
+import { ref } from 'vue'
 
 const dateStore = date()
 
@@ -7,8 +8,8 @@ const nowDate = new Date()
 const thisYear = nowDate.getFullYear()
 const thisMonth = nowDate.getMonth() + 1
 
-const year = dateStore.year
-const month = dateStore.month
+const year = ref(dateStore.year)
+const month = ref(dateStore.month)
 
 const yearList: number[] = []
 for (let i = thisYear - 2019 ; i > 0; i--) {
