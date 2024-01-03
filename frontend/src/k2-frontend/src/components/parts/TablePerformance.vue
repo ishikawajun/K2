@@ -2,7 +2,7 @@
 import { performance } from '../../stores/performance'
 import type { Performance } from '../../stores/interface';
 import { computed, watchEffect } from 'vue'
-import { Spinner } from 'flowbite-vue'
+import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
 
 const dateStore = date()
@@ -53,7 +53,7 @@ const getPerformance = computed(
                 </tr>
             </thead>
             <tbody>
-                <Spinner v-if="isLoading" size="12" />
+                <FwbSpinner v-if="isLoading" size="12" />
                 <tr v-else v-for="performance, i in getPerformance"
                     :class="{ 'bg-white border-b': i % 2 === 0, 'bg-gray-50 border-b': i % 2 !== 0 }"
                     :key="performance.account">

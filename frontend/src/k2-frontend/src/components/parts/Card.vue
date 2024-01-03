@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TheCard } from 'flowbite-vue'
+import { FwbCard } from 'flowbite-vue'
 import { computed } from 'vue';
 
 interface Props {
@@ -18,10 +18,12 @@ const textColor = computed(
 
 
 <template>
-    <the-card>
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ title }}</h5>
-        <p :class="textColor" class="font-normal">
-            {{ content }}円
-        </p>
-    </the-card>
+    <fwb-card>
+        <div class="p-5">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ title }}</h5>
+            <p :class="textColor" class="font-normal">
+                {{ content }}円
+            </p>
+        </div>
+    </fwb-card>
 </template>

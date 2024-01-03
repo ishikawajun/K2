@@ -4,7 +4,7 @@ import { aggregation } from '../../stores/aggregation';
 import { budget } from '../../stores/budget';
 import type { AggregationType, Budget } from '../../stores/interface'
 import { computed, watchEffect, ref } from 'vue'
-import { Spinner } from 'flowbite-vue'
+import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
 
 interface Props {
@@ -73,16 +73,16 @@ if (props.isEdit) {
 <template>
     <div class="flex flex-row space-x-4 space-x overflow-x-auto p-2">
         <div class="py-5">
-            <Spinner v-if="isLoading" size="8" />
+            <FwbSpinner v-if="isLoading" size="8" />
             <Card v-else-if="isEdit" title="予算金額" :content="budgetAmount" />
             <Card v-else title="予算金額" :content="getAggregation.budget" />
         </div>
         <div class="py-5">
-            <Spinner v-if="isLoading" size="8" />
+            <FwbSpinner v-if="isLoading" size="8" />
             <Card v-else title="消費金額" :content="getAggregation.consum" />
         </div>
         <div class="py-5">
-            <Spinner v-if="isLoading" size="8" />
+            <FwbSpinner v-if="isLoading" size="8" />
             <Card v-else title="予算残高" :content="getAggregation.balance" />
         </div>
     </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NavbarLogo, NavbarCollapse } from 'flowbite-vue'
+import { FwbNavbarLogo, FwbNavbarCollapse } from 'flowbite-vue'
 import Navbar from '../parts/NavbarBase.vue'
 import { RouterLink } from 'vue-router';
 
@@ -29,13 +29,13 @@ const onClick = (link: string): void => {
     <Navbar>
         <template #logo>
             <RouterLink :to="{ name: 'home' }">
-                <NavbarLogo alt="Flowbite logo" image-url="https://flowbite.com/docs/images/logo.svg">
+                <FwbNavbarLogo alt="Flowbite logo" image-url="https://flowbite.com/docs/images/logo.svg">
                     K2-Account
-                </NavbarLogo>
+                </FwbNavbarLogo>
             </RouterLink>
         </template>
         <template #default="{ isShowMenu }">
-            <NavbarCollapse :isShowMenu="isShowMenu">
+            <FwbNavbarCollapse :isShowMenu="isShowMenu">
                 <RouterLink :to="{ name: 'home' }">
                     <li @click="onClick('home')" :class="active.home">Home</li>
                 </RouterLink>
@@ -45,7 +45,7 @@ const onClick = (link: string): void => {
                 <RouterLink :to="{ name: 'calcu' }">
                     <li @click="onClick('calcu')" :class="active.calcu">Calcu</li>
                 </RouterLink>
-            </NavbarCollapse>
+            </FwbNavbarCollapse>
         </template>
     </Navbar>
 </template>

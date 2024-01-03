@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Button } from 'flowbite-vue'
+import { FwbButton  } from 'flowbite-vue'
 import axios from 'axios'
 import { ref } from 'vue'
-import { Alert } from 'flowbite-vue'
+import { FwbAlert } from 'flowbite-vue'
 
 let processStatus = ref()
 let inputPresent = ref(0)
@@ -58,8 +58,8 @@ const calculation = async () => {
 </script>
 
 <template>
-    <Alert v-if="processStatus && message === ''" type="success" closable>口座移動金額をLineに送信しました。</Alert>
-    <Alert type="danger" v-else-if="processStatus && message !== ''" closable>{{ message }}</Alert>
+    <FwbAlert v-if="processStatus && message === ''" type="success" closable>口座移動金額をLineに送信しました。</FwbAlert>
+    <FwbAlert type="danger" v-else-if="processStatus && message !== ''" closable>{{ message }}</FwbAlert>
     <div class="container mx-auto">
         <div class="flex justify-center flex-col items-center p-8">
             <h1 class="mb-7 text-3xl font-extrabold leading-none tracking-tight text-gray-900">口座移動金額自動計算ツール</h1>
@@ -79,7 +79,7 @@ const calculation = async () => {
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 no-spin">
             </div>
             <div class="m-4">
-                <Button color="default" @click="calculation()">Send</Button>
+                <FwbButton  color="default" @click="calculation()">Send</FwbButton >
             </div>
 
         </div>

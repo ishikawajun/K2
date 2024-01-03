@@ -7,7 +7,7 @@ import DateDropDwon from '../parts/DateDropDwon.vue';
 import { computed } from 'vue'
 import { date } from '../../stores/date'
 import { budget } from '../../stores/budget'
-import { Alert } from 'flowbite-vue'
+import { FwbAlert } from 'flowbite-vue'
 
 const dateStore = date()
 const year = computed(
@@ -39,8 +39,8 @@ const onClose = (): void => {
 </script>
 
 <template>
-    <Alert v-if="postMessage === '201'" type="success" closable @click="onClose()">予算テーブル更新成功</Alert>
-    <Alert type="danger" v-else-if="postMessage !== ''" @click="onClose()" closable>予算テーブル更新失敗:{{ postMessage }}</Alert>
+    <FwbAlert v-if="postMessage === '201'" type="success" closable @click="onClose()">予算テーブル更新成功</FwbAlert>
+    <FwbAlert type="danger" v-else-if="postMessage !== ''" @click="onClose()" closable>予算テーブル更新失敗:{{ postMessage }}</FwbAlert>
     <div class="container mx-auto">
         <Aggregation isEdit />
         <div class="flex flex-row-reverse flex-wrap p-3">

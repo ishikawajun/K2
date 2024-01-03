@@ -2,7 +2,7 @@
 import { budget } from '../../stores/budget'
 import type { Budget } from '../../stores/interface';
 import { computed, watchEffect } from 'vue'
-import { Spinner } from 'flowbite-vue'
+import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
 
 const dateStore = date()
@@ -50,7 +50,7 @@ const getBudget = computed(
                 </tr>
             </thead>
             <tbody>
-                <spinner v-if="isLoading" size="12" />
+                <FwbSpinner v-if="isLoading" size="12" />
                 <tr v-else v-for="budget, i in getBudget"
                     :class="{ 'bg-white border-b': i % 2 === 0, 'bg-gray-50 border-b': i % 2 !== 0 }" :key="budget.account">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
