@@ -19,3 +19,10 @@ export interface AccountMaster {
     account_en: string;
     account_jp: string;
 }
+
+export interface PresentData {
+    depositDate: number;
+    amount: number;
+    note?: string;
+    isEdit?: boolean
+}

@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { FwbButton  } from 'flowbite-vue'
+import { FwbButton } from 'flowbite-vue'
 import axios from 'axios'
 import { ref } from 'vue'
 import { FwbAlert } from 'flowbite-vue'
+import { PresentData } from '../../stores/interface';
 
-let processStatus = ref()
+type processFlag = 'Success' | 'Error' | 'None'
+
+let processStatus = ref<processFlag>('None')
 let inputPresent = ref(0)
 let inputBalance = ref(import.meta.env.VITE_ACCOUNT_AMOUNT)
 let inputCard = ref(0)
@@ -30,9 +33,7 @@ const calculation = async () => {
 
         const settingPresent = import.meta.env.VITE_PRESENT_AMOUNT
         const postPresent = settingPresent - inputPresent.value
-
         const postMoveAmount = balance + inputCard.value
-
         const postInvetment = accountAmount - budget - Math.max(postMoveAmount, 0) - Math.max(postPresent, 0)
 
         const postMessage = {
@@ -43,23 +44,43 @@ const calculation = async () => {
             'Authorization': 'Bearer ' + import.meta.env.VITE_LINE_TOKEN,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-        await axios.post(urlLine, postMessage, { headers: headers })
-        processStatus.value = true
+
+        const formattedDate = thisMonth.length === 2 ? Number(thisYear + thisMonth) : Number(thisYear + '0' + thisMonth)
+        const presentData: PresentData = {
+            depositDate: formattedDate,
+            amount: postPresent
+        }
+        const urlPresent = `/proxy/present`
+        try {
+            await axios.post(urlLine, postMessage, { headers: headers })
+            await axios.post(urlPresent, presentData)
+            processStatus.value = 'Success'
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                message = e.message
+                processStatus.value = 'Error'
+            }
+        }
+
+
     } else if (accountAmount > 0 && accountAmount - inputCard.value < 0) {
         message = `クレカ代を引くと${import.meta.env.VITE_ACCOUNT_AMOUNT}円以下になります。`
-        processStatus.value = false
+        processStatus.value = 'Error'
     } else {
         message = `残高が${import.meta.env.VITE_ACCOUNT_AMOUNT}円以上になるよう調整してください。`
-        processStatus.value = false
+        processStatus.value = 'Error'
     }
 
+}
 
+const onClose = (): void => {
+    processStatus.value = 'None'
 }
 </script>
 
 <template>
-    <FwbAlert v-if="processStatus && message === ''" type="success" closable>口座移動金額をLineに送信しました。</FwbAlert>
-    <FwbAlert type="danger" v-else-if="processStatus && message !== ''" closable>{{ message }}</FwbAlert>
+    <FwbAlert v-if="processStatus === 'Success'" type="success" @close="onClose()" closable>口座移動金額をLineに送信しました。</FwbAlert>
+    <FwbAlert type="danger" v-else-if="processStatus === 'Error'" @close="onClose()" closable>{{ message }}</FwbAlert>
     <div class="container mx-auto">
         <div class="flex justify-center flex-col items-center p-8">
             <h1 class="mb-7 text-3xl font-extrabold leading-none tracking-tight text-gray-900">口座移動金額自動計算ツール</h1>
@@ -79,7 +100,7 @@ const calculation = async () => {
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 no-spin">
             </div>
             <div class="m-4">
-                <FwbButton  color="default" @click="calculation()">Send</FwbButton >
+                <FwbButton color="default" @click="calculation()">Send</FwbButton>
             </div>
 
         </div>

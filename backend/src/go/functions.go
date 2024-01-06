@@ -1,9 +1,10 @@
 package swagger
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -21,7 +22,7 @@ func getBudgetFunc(w http.ResponseWriter, r *http.Request) {
 		INNER JOIN master_account ma
         ON ma.account_en = db.account WHERE year = %s AND month = %s`, year, month))
 	if err != nil {
-		log.Printf("Failed select buget from bi_data_budget: %v", err)
+		log.Printf("Failed select budget from bi_data_budget: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -39,13 +40,13 @@ func getBudgetFunc(w http.ResponseWriter, r *http.Request) {
 		budgetSlice = append(budgetSlice, budget)
 	}
 
-	bugetJson, err := json.Marshal(&budgetSlice)
+	budgetJson, err := json.Marshal(&budgetSlice)
 	if err != nil {
 		log.Printf("Failed to convert to budgetJson: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Write(bugetJson)
+	w.Write(budgetJson)
 
 }
 
@@ -179,7 +180,7 @@ func getAccountMasterFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 func postBudgetFunc(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Printf("Could not read json: %v", err)
@@ -207,12 +208,131 @@ func postBudgetFunc(w http.ResponseWriter, r *http.Request) {
 						ammount = ?;`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			log.Printf("Failed insert buget from bi_data_budget: %v", err)
+			log.Printf("Failed insert budget from bi_data_budget: %v", err)
 			return
 		}
 		ins.Exec(input.Year, input.Month, input.Account, input.Amount, input.Amount)
 		defer ins.Close()
 	}
 
+	w.WriteHeader(http.StatusCreated)
+}
+
+func getPresentFunc(w http.ResponseWriter, r *http.Request) {
+	db := connectDB()
+	defer db.Close()
+
+	rows, err := db.Query(fmt.Sprintf(`SELECT * FROM bi.present_account ORDER BY deposit_date ASC;`))
+	if err != nil {
+		log.Printf("Failed select present data from present_account:%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	aggregations, err := db.Query(fmt.Sprintf(`SELECT SUM(amount) FROM bi.present_account;`))
+	if err != nil {
+		log.Printf("Failed select aggregations data from present_account:%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var presentResponse PresentResponse
+	for rows.Next() {
+		var presentData Present
+		nullNote := new(sql.NullString)
+		err := rows.Scan(&presentData.DepositDate, &presentData.Amount, nullNote)
+		if err != nil {
+			log.Printf("Failed to convert to Present Data structure:%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if nullNote.Valid {
+			presentData.Note = nullNote.String
+		}
+		presentResponse.PresentData = append(presentResponse.PresentData, presentData)
+	}
+
+	for aggregations.Next() {
+		err := aggregations.Scan(&presentResponse.Aggregation)
+		if err != nil {
+			log.Printf("Failed to convert to Present aggregations Data structure:%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	presentBodyJson, err := json.Marshal(&presentResponse)
+	if err != nil {
+		log.Printf("Failed to convert to presentBodyJsonJson: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(presentBodyJson)
+}
+
+func postPresentFunc(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not read json: %v", err)
+		return
+	}
+	log.Printf(string(body))
+	var presentData Present
+	if err := json.Unmarshal(body, &presentData); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not unmarshal json: %v", err)
+		return
+	}
+	db := connectDB()
+	defer db.Close()
+
+	ins, err := db.Prepare(`INSERT INTO bi.present_account VALUES(?, ?, ?);`)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Failed insert present data from present_account: %v", err)
+		return
+	}
+
+	_, err = ins.Exec(presentData.DepositDate, presentData.Amount, presentData.Note)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Failed insert present data from present_account: %v", err)
+		return
+	}
+	defer ins.Close()
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+func putPresentFunc(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not read json: %v", err)
+		return
+	}
+	log.Printf(string(body))
+	var presentBody PresentBody
+	if err := json.Unmarshal(body, &presentBody); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not unmarshal json: %v", err)
+		return
+	}
+	db := connectDB()
+	defer db.Close()
+
+	for _, input := range presentBody.PresentData {
+		ins, err := db.Prepare(`
+			UPDATE bi.present_account SET amount = ?, note = ? WHERE deposit_date = ?;`)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Printf("Failed insert present data from present_account: %v", err)
+			return
+		}
+		ins.Exec(input.Amount, input.Note, input.DepositDate)
+		defer ins.Close()
+	}
 	w.WriteHeader(http.StatusCreated)
 }

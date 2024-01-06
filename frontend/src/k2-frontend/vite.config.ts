@@ -5,12 +5,16 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   server: {
-    cors: false,
     proxy: {
       '/api': {
         target: 'https://notify-api.line.me',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, 'api'),
+      },
+      '/proxy': {
+        target: `http://k2-backend:60001`,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/proxy/, ''),
       }
     }
   }

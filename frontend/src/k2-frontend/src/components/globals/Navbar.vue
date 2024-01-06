@@ -45,6 +45,9 @@ const onClick = (link: string): void => {
                 <RouterLink :to="{ name: 'calcu' }">
                     <li @click="onClick('calcu')" :class="active.calcu">Calcu</li>
                 </RouterLink>
+                <RouterLink :to="{ name: 'present' }">
+                    <li @click="onClick('present')" :class="active.present">Present</li>
+                </RouterLink>
             </FwbNavbarCollapse>
         </template>
     </Navbar>
