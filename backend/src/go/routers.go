@@ -88,4 +88,25 @@ var routes = Routes{
 		"/performance",
 		PerformanceGet,
 	},
+
+	Route{
+		"PresentGet",
+		strings.ToUpper("Get"),
+		"/present",
+		PresentGet,
+	},
+
+	Route{
+		"PresentPost",
+		strings.ToUpper("Post"),
+		"/present",
+		PresentPost,
+	},
+
+	Route{
+		"PresentPut",
+		strings.ToUpper("Put"),
+		"/present",
+		PresentPut,
+	},
 }
