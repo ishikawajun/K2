@@ -4,29 +4,29 @@ info:
   description: K2のバックエンドAPI
   version: 1.0.0
 servers:
-- url: /
+  - url: /
 paths:
   /budget:
     get:
       summary: Get budget data from local DB
       description: Return  an array of budget model
       parameters:
-      - name: year
-        in: query
-        description: budget year
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: month
-        in: query
-        description: budget month
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: year
+          in: query
+          description: budget year
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: month
+          in: query
+          description: budget month
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
       responses:
         "200":
           description: A JSON array of budget model
@@ -35,48 +35,48 @@ paths:
               schema:
                 type: array
                 example:
-                - account: book
-                  amount: 10000
-                - account: eart
-                  amount: 3000
+                  - account: book
+                    amount: 10000
+                  - account: eat
+                    amount: 3000
                 items:
-                  $ref: '#/components/schemas/Budget'
+                  $ref: "#/components/schemas/Budget"
                 x-content-type: application/json
     post:
       summary: Create a new budget record
       description: Create a new budget record
       parameters:
-      - name: year
-        in: query
-        description: performance year
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: month
-        in: query
-        description: performance month
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: year
+          in: query
+          description: performance year
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: month
+          in: query
+          description: performance month
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
       requestBody:
         description: budget record to create
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PostDitail'
+              $ref: "#/components/schemas/PostDitail"
             example:
-            - year: 2023
-              month: 1
-              account: eat
-              amount: 10000
-            - year: 2023
-              month: 1
-              account: book
-              amount: 3000
+              - year: 2023
+                month: 1
+                account: eat
+                amount: 10000
+              - year: 2023
+                month: 1
+                account: book
+                amount: 3000
       responses:
         "201":
           description: CREATED
@@ -85,22 +85,22 @@ paths:
       summary: Get performance data from local DB
       description: Return  an array of performance model
       parameters:
-      - name: year
-        in: query
-        description: performance year
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: month
-        in: query
-        description: performance month
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: year
+          in: query
+          description: performance year
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: month
+          in: query
+          description: performance month
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
       responses:
         "200":
           description: A JSON array of performance model
@@ -109,50 +109,50 @@ paths:
               schema:
                 type: array
                 example:
-                - account: book
-                  amount: 10000
-                  balance: 5000
-                - account: eart
-                  amount: 3000
-                  balance: 100
+                  - account: book
+                    amount: 10000
+                    balance: 5000
+                  - account: eart
+                    amount: 3000
+                    balance: 100
                 items:
-                  $ref: '#/components/schemas/Performance'
+                  $ref: "#/components/schemas/Performance"
                 x-content-type: application/json
     post:
       summary: Create a new performance record
       description: Create a new performance record
       parameters:
-      - name: year
-        in: query
-        description: performance year
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: month
-        in: query
-        description: performance month
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: year
+          in: query
+          description: performance year
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: month
+          in: query
+          description: performance month
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
       requestBody:
         description: performance record to create
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PostDitail'
+              $ref: "#/components/schemas/PostDitail"
             example:
-            - year: 2023
-              month: 1
-              account: eat
-              amount: 10000
-            - year: 2023
-              month: 1
-              account: book
-              amount: 3000
+              - year: 2023
+                month: 1
+                account: eat
+                amount: 10000
+              - year: 2023
+                month: 1
+                account: book
+                amount: 3000
       responses:
         "201":
           description: CREATED
@@ -161,22 +161,22 @@ paths:
       summary: Get aggregation data from local DB
       description: Return  an array of aggregation model
       parameters:
-      - name: year
-        in: query
-        description: aggregation year
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: month
-        in: query
-        description: aggregation month
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: year
+          in: query
+          description: aggregation year
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: month
+          in: query
+          description: aggregation month
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
       responses:
         "200":
           description: A JSON array of aggregation model
@@ -189,14 +189,87 @@ paths:
                   consum: 95000
                   balance: 5000
                 items:
-                  $ref: '#/components/schemas/Aggregation'
+                  $ref: "#/components/schemas/Aggregation"
                 x-content-type: application/json
+  /present:
+    get:
+      summary: Get present data from local DB
+      description: Return  an array of present model and present aggregation
+      responses:
+        "200":
+          description: A JSON array of aggregation model
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      aggregation:
+                        type: integer
+                  - type: object
+                    properties:
+                      presentData:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Present"
+                example:
+                  aggregation: 25000
+                  presentData:
+                    - depositDate: "2024-01"
+                      amount: 10000
+                      note: "memo"
+                    - depositDate: "2024-02"
+                      amount: 15000
+                      note: "memo"
+                x-content-type: application/json
+    post:
+      summary: Create a new present data record
+      description: Create a new present data record
+      requestBody:
+        description: performance record to create
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Present"
+            example:
+              depositDate: "2024-02"
+              amount: 15000
+              note: "memo"
+      responses:
+        "201":
+          description: CREATED
+    put:
+      summary: Create a new present data record
+      description: Create a new present data record
+      requestBody:
+        description: performance record to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                presentData:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Present"
+            example:
+              presentData:
+                - depositDate: "2024-01"
+                  amount: 10000
+                  note: "memo"
+                - depositDate: "2024-02"
+                  amount: 15000
+                  note: "memo"
+      responses:
+        "200":
+          description: Updated
+
 components:
   schemas:
     Budget:
       required:
-      - account
-      - amount
+        - account
+        - amount
       type: object
       properties:
         account:
@@ -206,8 +279,8 @@ components:
           format: int64
     Performance:
       required:
-      - account
-      - amount
+        - account
+        - amount
       type: object
       properties:
         account:
@@ -220,9 +293,9 @@ components:
           format: int64
     Aggregation:
       required:
-      - balance
-      - budget
-      - consum
+        - balance
+        - budget
+        - consum
       type: object
       properties:
         budget:
@@ -237,12 +310,12 @@ components:
     PostDitail:
       type: array
       items:
-        $ref: '#/components/schemas/PostDitail_inner'
+        $ref: "#/components/schemas/PostDitail_inner"
     PostDitail_inner:
       required:
-      - account
-      - month
-      - year
+        - account
+        - month
+        - year
       type: object
       properties:
         year:
@@ -254,3 +327,16 @@ components:
         amount:
           type: integer
           format: int64
+    Present:
+      required:
+        - depositDate
+      type: object
+      properties:
+        depositDate:
+          type: string
+          format: date
+        amount:
+          type: integer
+          format: int64
+        note:
+          type: string
