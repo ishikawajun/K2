@@ -47,16 +47,19 @@ func AccountMasterGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func PresentGet(w http.ResponseWriter, r *http.Request) {
+	getPresentFunc(w, r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
 func PresentPost(w http.ResponseWriter, r *http.Request) {
+	postPresentFunc(w, r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
 func PresentPut(w http.ResponseWriter, r *http.Request) {
+	putPresentFunc(w, r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }

@@ -9,6 +9,5 @@
 package swagger
 
 type PresentBody struct {
-
 	PresentData []Present `json:"presentData,omitempty"`
 }

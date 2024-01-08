@@ -8,10 +8,7 @@
  */
 package swagger
 
-type Present struct {
-	DepositDate int64 `json:"depositDate"`
-
-	Amount int64 `json:"amount"`
-
-	Note string `json:"note,omitempty"`
+type PresentResponse struct {
+	Aggregation int64     `json:"aggregation"`
+	PresentData []Present `json:"presentData,omitempty"`
 }
