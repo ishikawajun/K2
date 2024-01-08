@@ -215,10 +215,10 @@ paths:
                 example:
                   aggregation: 25000
                   presentData:
-                    - depositDate: "2024-01"
+                    - depositDate: 202401
                       amount: 10000
                       note: "memo"
-                    - depositDate: "2024-02"
+                    - depositDate: 202402
                       amount: 15000
                       note: "memo"
                 x-content-type: application/json
@@ -232,7 +232,7 @@ paths:
             schema:
               $ref: "#/components/schemas/Present"
             example:
-              depositDate: "2024-02"
+              depositDate: 202402
               amount: 15000
               note: "memo"
       responses:
@@ -254,16 +254,17 @@ paths:
                     $ref: "#/components/schemas/Present"
             example:
               presentData:
-                - depositDate: "2024-01"
+                - depositDate: 202401
                   amount: 10000
                   note: "memo"
-                - depositDate: "2024-02"
+                - depositDate: 202402
                   amount: 15000
                   note: "memo"
       responses:
         "200":
           description: Updated
-
+                
+  
 components:
   schemas:
     Budget:
@@ -333,8 +334,8 @@ components:
       type: object
       properties:
         depositDate:
-          type: string
-          format: date
+          type: integer
+          format: int64
         amount:
           type: integer
           format: int64

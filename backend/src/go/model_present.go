@@ -9,8 +9,7 @@
 package swagger
 
 type Present struct {
-
-	DepositDate string `json:"depositDate"`
+	DepositDate int64 `json:"depositDate"`
 
 	Amount int64 `json:"amount,omitempty"`
 
