@@ -4,6 +4,7 @@ import { START_LOCATION } from 'vue-router'
 import Home from '../components/pages/Home.vue'
 import Edit from '../components/pages/Edit.vue'
 import Calcu from '../components/pages/Calcu.vue'
+import Present from '../components/pages/Present.vue'
 
 const routerSettings: RouteRecordRaw[] = [
     {
@@ -17,7 +18,7 @@ const routerSettings: RouteRecordRaw[] = [
         component: Edit,
         beforeEnter: (to, from) => {
             if (from === START_LOCATION) return "/"
-          },
+        },
     },
     {
         path: "/calcu",
@@ -25,7 +26,15 @@ const routerSettings: RouteRecordRaw[] = [
         component: Calcu,
         beforeEnter: (to, from) => {
             if (from === START_LOCATION) return "/"
-          },
+        },
+    },
+    {
+        path: "/present",
+        name: "present",
+        component: Present,
+        beforeEnter: (to, from) => {
+            if (from === START_LOCATION) return "/"
+        },
     }
 ]
 
