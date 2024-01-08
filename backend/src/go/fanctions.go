@@ -3,7 +3,7 @@ package swagger
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -179,7 +179,7 @@ func getAccountMasterFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 func postBudgetFunc(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Printf("Could not read json: %v", err)
