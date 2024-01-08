@@ -22,7 +22,7 @@ func getBudgetFunc(w http.ResponseWriter, r *http.Request) {
 		INNER JOIN master_account ma
         ON ma.account_en = db.account WHERE year = %s AND month = %s`, year, month))
 	if err != nil {
-		log.Printf("Failed select buget from bi_data_budget: %v", err)
+		log.Printf("Failed select budget from bi_data_budget: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -40,13 +40,13 @@ func getBudgetFunc(w http.ResponseWriter, r *http.Request) {
 		budgetSlice = append(budgetSlice, budget)
 	}
 
-	bugetJson, err := json.Marshal(&budgetSlice)
+	budgetJson, err := json.Marshal(&budgetSlice)
 	if err != nil {
 		log.Printf("Failed to convert to budgetJson: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Write(bugetJson)
+	w.Write(budgetJson)
 
 }
 
@@ -208,7 +208,7 @@ func postBudgetFunc(w http.ResponseWriter, r *http.Request) {
 						ammount = ?;`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			log.Printf("Failed insert buget from bi_data_budget: %v", err)
+			log.Printf("Failed insert budget from bi_data_budget: %v", err)
 			return
 		}
 		ins.Exec(input.Year, input.Month, input.Account, input.Amount, input.Amount)
@@ -328,7 +328,7 @@ func putPresentFunc(w http.ResponseWriter, r *http.Request) {
 			UPDATE bi.present_account SET amount = ?, note = ? WHERE deposit_date = ?;`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			log.Printf("Failed insert buget from bi_data_budget: %v", err)
+			log.Printf("Failed insert present data from present_account: %v", err)
 			return
 		}
 		ins.Exec(input.Amount, input.Note, input.DepositDate)

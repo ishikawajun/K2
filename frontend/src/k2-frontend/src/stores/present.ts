@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { PresentData } from './interface'
 import axios from 'axios'
-import { Ref, ref } from 'vue';
+import { Ref, ref } from 'vue'
 
 interface State {
     aggregation: Ref<number>
@@ -12,6 +12,10 @@ interface State {
 
 interface GetPresentResponse {
     aggregation: number
+    presentData: PresentData[]
+}
+
+interface PostPresentRequest {
     presentData: PresentData[]
 }
 
@@ -30,37 +34,35 @@ export const present = defineStore({
     },
     actions: {
         async getPresentFunc() {
-            const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/present`
+            const url = `/proxy/present`
             const response: GetPresentResponse = (await axios.get(url)).data
             this.presents = response.presentData
             this.aggregation = response.aggregation
             this.isLoading = false
         },
-        // setFuturData(accountMaster: AccountMaster[]) {
-        //     this.budget = []
-        //     for (const master of accountMaster) {
-        //         this.budget.push({ account: master.account_jp, amount: 0 })
-        //     }
-        // },
-        // async postBudgetFunc(year: number, month: number) {
-        //     try {
-        //         const postData: PostData[] = []
-        //         for (const budget of this.budget) {
-        //             postData.push({
-        //                 year: String(year),
-        //                 month: String(month),
-        //                 account: budget.account,
-        //                 amount: budget.amount
-        //             })
-        //         }
-        //         const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/budget`
-        //         const response = await axios.post(url, postData)
-        //         this.postMessage = String(response.status)
-        //     } catch (e) {
-        //         if (axios.isAxiosError(e)) {
-        //             this.postMessage = e.message
-        //         }
-        //     }
-        // }
+        async putPresentFunc() {
+            try {
+                const postPresentRequest: PostPresentRequest = { presentData: [] }
+                for (const present of this.presents) {
+                    if (present.isEdit) {
+                        postPresentRequest.presentData.push({
+                            depositDate: present.depositDate,
+                            amount: present.amount,
+                            note: present.note
+                        })
+                        present.isEdit = false
+                    }
+                }
+                const url = `/proxy/present`
+                const response = await axios.put(url, postPresentRequest)
+                this.postMessage = String(response.status)
+            } catch (e) {
+                if (axios.isAxiosError(e)) {
+                    this.postMessage = e.message
+                } else {
+                    this.postMessage = String(e)
+                }
+            }
+        }
     },
 })

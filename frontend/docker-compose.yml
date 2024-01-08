@@ -9,3 +9,9 @@ services:
       - .:/app
     ports:
       - 5173:5173
+    networks:
+      - backend_default
+
+networks:
+  backend_default:
+    external: true

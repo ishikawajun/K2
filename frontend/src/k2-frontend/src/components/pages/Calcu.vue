@@ -5,7 +5,7 @@ import { ref } from 'vue'
 import { FwbAlert } from 'flowbite-vue'
 import { PresentData } from '../../stores/interface';
 
-type processFlag = 'Scusess' | 'Error' | 'None'
+type processFlag = 'Success' | 'Error' | 'None'
 
 let processStatus = ref<processFlag>('None')
 let inputPresent = ref(0)
@@ -50,11 +50,11 @@ const calculation = async () => {
             depositDate: formattedDate,
             amount: postPresent
         }
-        const urlPresent = `http://${import.meta.env.VITE_BACKEND_URI}:60001/present`
+        const urlPresent = `/proxy/present`
         try {
             await axios.post(urlLine, postMessage, { headers: headers })
             await axios.post(urlPresent, presentData)
-            processStatus.value = 'Scusess'
+            processStatus.value = 'Success'
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 message = e.message
@@ -72,11 +72,15 @@ const calculation = async () => {
     }
 
 }
+
+const onClose = (): void => {
+    processStatus.value = 'None'
+}
 </script>
 
 <template>
-    <FwbAlert v-if="processStatus === 'Scusess'" type="success" closable>口座移動金額をLineに送信しました。</FwbAlert>
-    <FwbAlert type="danger" v-else-if="processStatus === 'Error'" closable>{{ message }}</FwbAlert>
+    <FwbAlert v-if="processStatus === 'Success'" type="success" @close="onClose()" closable>口座移動金額をLineに送信しました。</FwbAlert>
+    <FwbAlert type="danger" v-else-if="processStatus === 'Error'" @close="onClose()" closable>{{ message }}</FwbAlert>
     <div class="container mx-auto">
         <div class="flex justify-center flex-col items-center p-8">
             <h1 class="mb-7 text-3xl font-extrabold leading-none tracking-tight text-gray-900">口座移動金額自動計算ツール</h1>
