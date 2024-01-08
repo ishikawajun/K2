@@ -294,7 +294,13 @@ func postPresentFunc(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed insert present data from present_account: %v", err)
 		return
 	}
-	ins.Exec(presentData.DepositDate, presentData.Amount, presentData.Note)
+
+	_, err = ins.Exec(presentData.DepositDate, presentData.Amount, presentData.Note)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Failed insert present data from present_account: %v", err)
+		return
+	}
 	defer ins.Close()
 
 	w.WriteHeader(http.StatusCreated)

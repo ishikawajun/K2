@@ -46,7 +46,6 @@ const calculation = async () => {
         }
 
         const formattedDate = thisMonth.length === 2 ? Number(thisYear + thisMonth) : Number(thisYear + '0' + thisMonth)
-
         const presentData: PresentData = {
             depositDate: formattedDate,
             amount: postPresent
