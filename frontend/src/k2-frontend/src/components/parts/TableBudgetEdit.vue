@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { budget } from '../../stores/budget'
 import { accountMaster } from '../../stores/accountMaster'
-import type { Budget } from '../../stores/interface';
+import type { Budget } from '../../stores/interface'
 import { computed, watchEffect } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
