@@ -36,7 +36,7 @@ watchEffect(
     (): void => {
         const thisDate = new Date(thisYear, thisMonth)
         const selectedDate = new Date(year.value, month.value)
-        if (selectedDate > thisDate) {
+        if (selectedDate >= thisDate) {
             const accountMaster = accountMasterStore.accountMaster
             budgetStore.setFuturData(accountMaster)
         } else {

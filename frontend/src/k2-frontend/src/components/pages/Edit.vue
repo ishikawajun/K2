@@ -3,7 +3,7 @@ import Aggregation from '../parts/Aggregations.vue';
 import TableBudgetEdit from '../parts/TableBudgetEdit.vue';
 import TablePerformance from '../parts/TablePerformance.vue';
 import Modal from '../parts/Modal.vue';
-import DateDropDwon from '../parts/DateDropDwon.vue';
+import DateDropDown from '../parts/DateDropDown.vue';
 import { computed } from 'vue'
 import { date } from '../../stores/date'
 import { budget } from '../../stores/budget'
@@ -40,11 +40,12 @@ const onClose = (): void => {
 
 <template>
     <FwbAlert v-if="postMessage === '201'" type="success" closable @click="onClose()">予算テーブル更新成功</FwbAlert>
-    <FwbAlert type="danger" v-else-if="postMessage !== ''" @click="onClose()" closable>予算テーブル更新失敗:{{ postMessage }}</FwbAlert>
+    <FwbAlert type="danger" v-else-if="postMessage !== ''" @click="onClose()" closable>予算テーブル更新失敗:{{ postMessage }}
+    </FwbAlert>
     <div class="container mx-auto">
         <Aggregation isEdit />
         <div class="flex flex-row-reverse flex-wrap p-3">
-            <DateDropDwon />
+            <DateDropDown />
         </div>
         <div class="flex flex-row flex-wrap">
             <div class="p-3 overflow-x-auto">
