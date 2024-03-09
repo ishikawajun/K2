@@ -145,11 +145,11 @@ func getAggregationFunc(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func getAccountMasterFunc(w http.ResponseWriter, r *http.Request) {
+func getAccountMasterFunc(w http.ResponseWriter) {
 	db := connectDB()
 	defer db.Close()
 
-	rows, err := db.Query(fmt.Sprintf(`SELECT account_en, account_jp FROM bi.master_account;`))
+	rows, err := db.Query(`SELECT account_en, account_jp FROM bi.master_account;`)
 	if err != nil {
 		log.Printf("Failed select aggregation from bi_data_storage:%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -186,7 +186,7 @@ func postBudgetFunc(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Could not read json: %v", err)
 		return
 	}
-	log.Printf(string(body))
+	log.Print(string(body))
 	var inputData []PostDitailInner
 	if err := json.Unmarshal(body, &inputData); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -218,18 +218,18 @@ func postBudgetFunc(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func getPresentFunc(w http.ResponseWriter, r *http.Request) {
+func getPresentFunc(w http.ResponseWriter) {
 	db := connectDB()
 	defer db.Close()
 
-	rows, err := db.Query(fmt.Sprintf(`SELECT * FROM bi.present_account ORDER BY deposit_date ASC;`))
+	rows, err := db.Query(`SELECT * FROM bi.present_account ORDER BY deposit_date ASC;`)
 	if err != nil {
 		log.Printf("Failed select present data from present_account:%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	aggregations, err := db.Query(fmt.Sprintf(`SELECT SUM(amount) FROM bi.present_account;`))
+	aggregations, err := db.Query(`SELECT SUM(amount) FROM bi.present_account;`)
 	if err != nil {
 		log.Printf("Failed select aggregations data from present_account:%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -278,7 +278,7 @@ func postPresentFunc(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Could not read json: %v", err)
 		return
 	}
-	log.Printf(string(body))
+	log.Print(string(body))
 	var presentData Present
 	if err := json.Unmarshal(body, &presentData); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -313,7 +313,7 @@ func putPresentFunc(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Could not read json: %v", err)
 		return
 	}
-	log.Printf(string(body))
+	log.Print(string(body))
 	var presentBody PresentBody
 	if err := json.Unmarshal(body, &presentBody); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

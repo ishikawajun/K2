@@ -11,3 +11,5 @@ require (
 	github.com/rs/cors v1.8.3
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
+
+require github.com/caarlos0/env/v10 v10.0.0

@@ -41,13 +41,13 @@ func PerformancePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func AccountMasterGet(w http.ResponseWriter, r *http.Request) {
-	getAccountMasterFunc(w, r)
+	getAccountMasterFunc(w)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
 func PresentGet(w http.ResponseWriter, r *http.Request) {
-	getPresentFunc(w, r)
+	getPresentFunc(w)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
