@@ -2,7 +2,7 @@
 import Aggregation from '../parts/Aggregations.vue';
 import TableBudget from '../parts/TableBudget.vue';
 import TablePerformance from '../parts/TablePerformance.vue';
-import DateDropDwon from '../parts/DateDropDwon.vue';
+import DateDropDwon from '../parts/DateDropDown.vue';
 import { computed } from 'vue'
 import { date } from '../../stores/date'
 
