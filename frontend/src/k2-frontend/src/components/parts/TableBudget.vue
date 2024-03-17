@@ -4,6 +4,7 @@ import type { Budget } from '../../stores/interface';
 import { computed, watchEffect } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
+import { formatMoney } from '../../util/utility'
 
 const dateStore = date()
 const year = computed(
@@ -45,7 +46,7 @@ const getBudget = computed(
                         Account Subject
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Budget Ammount
+                        Budget Amount
                     </th>
                 </tr>
             </thead>
@@ -57,7 +58,7 @@ const getBudget = computed(
                         {{ budget.account }}
                     </th>
                     <td class="px-6 py-4">
-                        {{ budget.amount }}円
+                        {{ formatMoney(budget.amount) }}円
                     </td>
                 </tr>
             </tbody>
