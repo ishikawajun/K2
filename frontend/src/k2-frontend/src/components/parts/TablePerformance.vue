@@ -4,6 +4,7 @@ import type { Performance } from '../../stores/interface';
 import { computed, watchEffect } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
+import { formatMoney } from '../../util/utility'
 
 const dateStore = date()
 const year = computed(
@@ -45,10 +46,10 @@ const getPerformance = computed(
                         Account Subject
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Achievement Ammount
+                        Achievement Amount
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Balance Ammount
+                        Balance Amount
                     </th>
                 </tr>
             </thead>
@@ -61,10 +62,10 @@ const getPerformance = computed(
                         {{ performance.account }}
                     </th>
                     <td class="px-6 py-4">
-                        {{ performance.amount }}円
+                        {{ formatMoney(performance.amount) }}円
                     </td>
                     <td :class="{ 'text-red-500': performance.balance < 0 }" class="px-6 py-4">
-                        {{ performance.balance }}円
+                        {{ formatMoney(performance.balance) }}円
                     </td>
                 </tr>
             </tbody>

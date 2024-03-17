@@ -5,6 +5,7 @@ import type { Budget } from '../../stores/interface'
 import { computed, watchEffect } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
+import { formatMoney } from '../../util/utility'
 
 
 const dateStore = date()
@@ -62,7 +63,7 @@ const isLoading = computed(
                         Account Subject
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Budget Ammount
+                        Budget Amount
                     </th>
                 </tr>
             </thead>
