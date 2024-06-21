@@ -8,9 +8,7 @@
  */
 package swagger
 
-type AccountMasterInner struct {
+type AccountMasterBody struct {
 
-	AccountEn string `json:"account_en"`
-
-	AccountJp string `json:"account_jp"`
+	AccountData []AccountMaster `json:"account_data,omitempty"`
 }

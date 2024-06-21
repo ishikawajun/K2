@@ -5,6 +5,7 @@ import Home from '../components/pages/Home.vue'
 import Edit from '../components/pages/Edit.vue'
 import Calcu from '../components/pages/Calcu.vue'
 import Present from '../components/pages/Present.vue'
+import Master from '../components/pages/MasterEdit.vue'
 
 const routerSettings: RouteRecordRaw[] = [
     {
@@ -32,6 +33,14 @@ const routerSettings: RouteRecordRaw[] = [
         path: "/present",
         name: "present",
         component: Present,
+        beforeEnter: (to, from) => {
+            if (from === START_LOCATION) return "/"
+        },
+    },
+    {
+        path: "/master",
+        name: "master",
+        component: Master,
         beforeEnter: (to, from) => {
             if (from === START_LOCATION) return "/"
         },

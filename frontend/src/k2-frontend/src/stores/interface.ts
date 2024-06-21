@@ -18,11 +18,23 @@ export interface Performance {
 export interface AccountMaster {
     account_en: string;
     account_jp: string;
+    isEdit?: boolean;
 }
 
 export interface PresentData {
     depositDate: number;
     amount: number;
     note?: string;
-    isEdit?: boolean
+    isEdit?: boolean;
+}
+
+export interface ParamMaster {
+    category: string;
+    key: string;
+    paramName?: string;
+    value?: string;
+}
+
+export interface ParamMasterBody {
+    paramData: ParamMaster[]
 }

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { budget } from '../../stores/budget'
-import { accountMaster } from '../../stores/accountMaster'
+import { master } from '../../stores/accountMaster'
 import type { Budget } from '../../stores/interface'
 import { computed, watchEffect } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
-import { formatMoney } from '../../util/utility'
 
 
 const dateStore = date()
@@ -25,7 +24,7 @@ const thisYear = thisDate.getFullYear()
 const thisMonth = thisDate.getMonth() + 1
 
 const budgetStore = budget()
-const accountMasterStore = accountMaster()
+const accountMasterStore = master()
 const getBudget = computed(
     (): Budget[] => {
         return budgetStore.budget
@@ -70,7 +69,8 @@ const isLoading = computed(
             <tbody>
                 <FwbSpinner v-if="isLoading" size="12" />
                 <tr v-else v-for="budget, i in getBudget"
-                    :class="{ 'bg-white border-b': i % 2 === 0, 'bg-gray-50 border-b': i % 2 !== 0 }" :key="budget.account">
+                    :class="{ 'bg-white border-b': i % 2 === 0, 'bg-gray-50 border-b': i % 2 !== 0 }"
+                    :key="budget.account">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {{ budget.account }}
                     </th>

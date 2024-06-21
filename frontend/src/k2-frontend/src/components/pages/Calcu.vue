@@ -1,17 +1,39 @@
 <script setup lang="ts">
 import { FwbButton } from 'flowbite-vue'
 import axios from 'axios'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { FwbAlert } from 'flowbite-vue'
-import { PresentData } from '../../stores/interface';
+import { PresentData, ParamMasterBody } from '../../stores/interface';
 
 type processFlag = 'Success' | 'Error' | 'None'
+type CalucParam = {
+    baseAccountAmount: number
+    basePresentAmount: number
+}
 
-let processStatus = ref<processFlag>('None')
-let inputPresent = ref(0)
-let inputBalance = ref(import.meta.env.VITE_ACCOUNT_AMOUNT)
-let inputCard = ref(0)
+const getParam = async (): Promise<CalucParam> => {
+    const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/param_master/account-calcu`
+    const response = (await axios.get<ParamMasterBody>(url)).data
+    const accountAmount = response.paramData.filter(value => value.key === "base-account-amount")[0]
+    const presentAmount = response.paramData.filter(value => value.key === "base-present-amount")[0]
+    return {
+        baseAccountAmount: Number(accountAmount.value),
+        basePresentAmount: Number(presentAmount.value)
+    }
+}
+
+const inputBalance = ref(0)
+let param: CalucParam = { baseAccountAmount: 0, basePresentAmount: 0 }
+onMounted(async () => {
+    param = await getParam()
+    inputBalance.value = param.baseAccountAmount
+})
+
+const processStatus = ref<processFlag>('None')
+const inputPresent = ref(0)
+const inputCard = ref(0)
 let message = ''
+
 
 const calculation = async () => {
     const date = new Date
@@ -28,10 +50,10 @@ const calculation = async () => {
     const responseBG = await axios.get(urlBG)
     const budget = responseBG.data.budget
 
-    const accountAmount = inputBalance.value - import.meta.env.VITE_ACCOUNT_AMOUNT
+    const accountAmount = inputBalance.value - param.baseAccountAmount
     if (accountAmount > 0 && accountAmount - inputCard.value > 0) {
 
-        const settingPresent = import.meta.env.VITE_PRESENT_AMOUNT
+        const settingPresent = param.basePresentAmount
         const postPresent = settingPresent - inputPresent.value
         const postMoveAmount = balance + inputCard.value
         const postInvetment = accountAmount - budget - Math.max(postMoveAmount, 0) - Math.max(postPresent, 0)
@@ -64,10 +86,10 @@ const calculation = async () => {
 
 
     } else if (accountAmount > 0 && accountAmount - inputCard.value < 0) {
-        message = `クレカ代を引くと${import.meta.env.VITE_ACCOUNT_AMOUNT}円以下になります。`
+        message = `クレカ代を引くと${param.baseAccountAmount}円以下になります。`
         processStatus.value = 'Error'
     } else {
-        message = `残高が${import.meta.env.VITE_ACCOUNT_AMOUNT}円以上になるよう調整してください。`
+        message = `残高が${param.baseAccountAmount}円以上になるよう調整してください。`
         processStatus.value = 'Error'
     }
 
@@ -79,7 +101,8 @@ const onClose = (): void => {
 </script>
 
 <template>
-    <FwbAlert v-if="processStatus === 'Success'" type="success" @close="onClose()" closable>口座移動金額をLineに送信しました。</FwbAlert>
+    <FwbAlert v-if="processStatus === 'Success'" type="success" @close="onClose()" closable>口座移動金額をLineに送信しました。
+    </FwbAlert>
     <FwbAlert type="danger" v-else-if="processStatus === 'Error'" @close="onClose()" closable>{{ message }}</FwbAlert>
     <div class="container mx-auto">
         <div class="flex justify-center flex-col items-center p-8">
