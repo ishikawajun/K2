@@ -62,6 +62,13 @@ var routes = Routes{
 	},
 
 	Route{
+		"AccountMasterPost",
+		strings.ToUpper("Post"),
+		"/account_master",
+		AccountMasterPost,
+	},
+
+	Route{
 		"AggregationGet",
 		strings.ToUpper("Get"),
 		"/aggregation",
@@ -108,5 +115,19 @@ var routes = Routes{
 		strings.ToUpper("Put"),
 		"/present",
 		PresentPut,
+	},
+
+	Route{
+		"ParamMasterCategoryGet",
+		strings.ToUpper("Get"),
+		"/param_master/{category}",
+		ParamMasterCategoryGet,
+	},
+
+	Route{
+		"ParamMasterPost",
+		strings.ToUpper("Post"),
+		"/param_master",
+		ParamMasterPost,
 	},
 }

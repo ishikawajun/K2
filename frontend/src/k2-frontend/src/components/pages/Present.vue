@@ -15,7 +15,8 @@ const onClose = (): void => {
 </script>
 
 <template>
-    <FwbAlert v-if="presentStore.postMessage === '201'" type="success" closable @click="onClose()">プレセントテーブル更新成功</FwbAlert>
+    <FwbAlert v-if="presentStore.postMessage === '201'" type="success" closable @click="onClose()">プレセントテーブル更新成功
+    </FwbAlert>
     <FwbAlert type="danger" v-else-if="presentStore.postMessage !== ''" @click="onClose()" closable>プレゼントテーブル更新失敗:{{
         presentStore.postMessage }}
     </FwbAlert>

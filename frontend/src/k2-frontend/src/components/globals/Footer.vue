@@ -16,6 +16,9 @@
             <li class="mr-4 hover:underline md:mr-6">
                 <RouterLink :to="{ name: 'present' }">Present</RouterLink>
             </li>
+            <li class="mr-4 hover:underline md:mr-6">
+                <RouterLink :to="{ name: 'master' }">Master</RouterLink>
+            </li>
         </ul>
     </footer>
 </template>

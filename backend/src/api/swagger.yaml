@@ -226,7 +226,7 @@ paths:
       summary: Create a new present data record
       description: Create a new present data record
       requestBody:
-        description: performance record to create
+        description: Present record to create
         content:
           application/json:
             schema:
@@ -239,10 +239,10 @@ paths:
         "201":
           description: CREATED
     put:
-      summary: Create a new present data record
-      description: Create a new present data record
+      summary: Update a present data record
+      description: Update a present data record
       requestBody:
-        description: performance record to create
+        description: Present record to update
         content:
           application/json:
             schema:
@@ -263,8 +263,112 @@ paths:
       responses:
         "200":
           description: Updated
-                
-  
+  /account_master:
+    get:
+      summary: Get account data from local DB of Account_Master table.
+      description: Return a JSON array of account_master model
+      responses:
+        "200":
+          description: A JSON array of account_master model
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      account_data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Account_Master"
+                example:
+                  account_data:
+                    - account_en: "book"
+                      account_jp: "本・教養"
+                    - account_en: "clothes"
+                      account_jp: "衣服"
+                x-content-type: application/json
+    post:
+      summary: Upsert data record
+      description: Upsert account data record
+      requestBody:
+        description: Account master record upsert to Account_Master table.
+        content:
+          content:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    account_data:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Account_Master"
+              example:
+                account_data:
+                  - account_en: "book"
+                    account_jp: "本・教養"
+                  - account_en: "clothes"
+                    account_jp: "衣服"
+      responses:
+        "201":
+          description: CREATED
+  /param_master/{category}:
+    get:
+      summary: Get param data from local DB of param_master table.
+      description: Return a JSON array of ParamMaster model
+      parameters:
+        - name: category
+          in: path
+          description: master table category
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A JSON array of ParamMaster model
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      paramData:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/ParamMaster"
+                example:
+                  paramData:
+                    - category: "account-calcu"
+                      key: "base-account-amount"
+                      paramName: "口座基準金額"
+                      value: "200000"
+                    - category: "account-calcu"
+                      key: "base-present-amount"
+                      paramName: "プレゼント口座移動基準金額"
+                      value: "20000"
+                x-content-type: application/json
+  /param_master:
+    post:
+      summary: Upsert param data record
+      description: Upsert  param data record
+      requestBody:
+        description: Param data record upsert to param_master table.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParamMaster"
+            example:
+              - category: "account-calcu"
+                key: "base-account-amount"
+                paramName: "口座基準金額"
+                value: "200000"
+              - category: "account-calcu"
+                key: "base-present-amount"
+                paramName: "プレゼント口座移動基準金額"
+                value: "20000"
+      responses:
+        "201":
+          description: CREATED
+
 components:
   schemas:
     Budget:
@@ -340,4 +444,28 @@ components:
           type: integer
           format: int64
         note:
+          type: string
+    Account_Master:
+      required:
+        - account_en
+        - account_jp
+      type: object
+      properties:
+        account_en:
+          type: string
+        account_jp:
+          type: string
+    ParamMaster:
+      required:
+        - category
+        - key
+      type: object
+      properties:
+        category:
+          type: string
+        key:
+          type: string
+        paramName:
+          type: string
+        value:
           type: string

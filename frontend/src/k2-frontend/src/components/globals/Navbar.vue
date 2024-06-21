@@ -7,6 +7,8 @@ interface IsActive {
     home: string;
     edit: string;
     calcu: string;
+    present: string;
+    master: string;
     [key: string]: string;
 }
 const activeColor = 'block py-2 pr-4 pl-3 rounded md:p-0 bg-blue-700 md:bg-transparent text-white md:text-blue-700'
@@ -15,6 +17,8 @@ const active: IsActive = {
     home: activeColor,
     edit: disactiveColr,
     calcu: disactiveColr,
+    present: disactiveColr,
+    master: disactiveColr,
 }
 
 const onClick = (link: string): void => {
@@ -47,6 +51,9 @@ const onClick = (link: string): void => {
                 </RouterLink>
                 <RouterLink :to="{ name: 'present' }">
                     <li @click="onClick('present')" :class="active.present">Present</li>
+                </RouterLink>
+                <RouterLink :to="{ name: 'master' }">
+                    <li @click="onClick('master')" :class="active.master">Master</li>
                 </RouterLink>
             </FwbNavbarCollapse>
         </template>

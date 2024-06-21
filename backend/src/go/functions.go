@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func getBudgetFunc(w http.ResponseWriter, r *http.Request) {
@@ -157,16 +158,16 @@ func getAccountMasterFunc(w http.ResponseWriter) {
 	}
 	defer rows.Close()
 
-	var accountMasterSlice []AccountMasterInner
+	var accountMasterSlice AccountMasterBody
 	for rows.Next() {
-		var accountMasterInner AccountMasterInner
+		var accountMasterInner AccountMaster
 		err := rows.Scan(&accountMasterInner.AccountEn, &accountMasterInner.AccountJp)
 		if err != nil {
 			log.Printf("Failed to convert to AccountMasterInner structure:%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		accountMasterSlice = append(accountMasterSlice, accountMasterInner)
+		accountMasterSlice.AccountData = append(accountMasterSlice.AccountData, accountMasterInner)
 	}
 
 	accountMasterInnerJson, err := json.Marshal(&accountMasterSlice)
@@ -177,6 +178,119 @@ func getAccountMasterFunc(w http.ResponseWriter) {
 	}
 	w.Write(accountMasterInnerJson)
 
+}
+
+func postAccountMasterFunc(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not read json: %v", err)
+		return
+	}
+	log.Print(string(body))
+	var inputData AccountMasterBody
+	if err := json.Unmarshal(body, &inputData); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not unmarshal json: %v", err)
+		return
+	}
+	db := connectDB()
+	defer db.Close()
+
+	for _, input := range inputData.AccountData {
+		ins, err := db.Prepare(`
+			INSERT INTO master_account VALUES(
+						?,
+						?
+						)
+						ON DUPLICATE KEY UPDATE
+						account_en = ?,
+						account_jp = ?;`)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Printf("Failed upsert of master_account: %v", err)
+			return
+		}
+		ins.Exec(input.AccountEn, input.AccountJp, input.AccountEn, input.AccountJp)
+		defer ins.Close()
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+func getParamMasterFunc(w http.ResponseWriter, r *http.Request) {
+	db := connectDB()
+	defer db.Close()
+
+	requestCategory := strings.TrimPrefix(r.URL.Path, "/param_master/")
+
+	rows, err := db.Query("SELECT category, `key`, param_name, value FROM bi.param_master WHERE category = ?;", requestCategory)
+	if err != nil {
+		log.Printf("Failed select aggregation from bi_data_storage:%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var paramMasterSlice ParamMasterBody
+	for rows.Next() {
+		var paramMasterInner ParamMaster
+		err := rows.Scan(&paramMasterInner.Category, &paramMasterInner.Key, &paramMasterInner.ParamName, &paramMasterInner.Value)
+		if err != nil {
+			log.Printf("Failed to convert to paramMasterInner structure:%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		paramMasterSlice.ParamData = append(paramMasterSlice.ParamData, paramMasterInner)
+	}
+
+	paramMasterInnerJson, err := json.Marshal(&paramMasterSlice)
+	if err != nil {
+		log.Printf("Failed to convert to paramMasterSliceJson: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(paramMasterInnerJson)
+}
+
+func postParamMasterFunc(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not read json: %v", err)
+		return
+	}
+	log.Print(string(body))
+	var inputData []ParamMaster
+	if err := json.Unmarshal(body, &inputData); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Could not unmarshal json: %v", err)
+		return
+	}
+	db := connectDB()
+	defer db.Close()
+
+	for _, input := range inputData {
+		ins, err := db.Prepare(`
+			INSERT INTO param_master VALUES(
+						?,
+						?,
+						?,
+						?
+						)
+						ON DUPLICATE KEY UPDATE
+						param_name = ?,
+						value = ?;`)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Printf("Failed upsert of param_master: %v", err)
+			return
+		}
+		ins.Exec(input.Category, input.Key, input.ParamName, input.Value, input.ParamName, input.Value)
+		defer ins.Close()
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
 
 func postBudgetFunc(w http.ResponseWriter, r *http.Request) {
