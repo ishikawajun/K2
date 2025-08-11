@@ -110,7 +110,7 @@ func getAggregationFunc(w http.ResponseWriter, r *http.Request) {
 		`SELECT
 	 		SUM(bdb.ammount) budget
 			,IFNULL(SUM(bds.ammount), 0) consum
-			,IFNULL(SUM(bdb.ammount - bds.ammount), 0) balance
+			,IFNULL(SUM(bdb.ammount) - SUM(bds.ammount), 0) balance
 		FROM bi_data_budget bdb
 		LEFT JOIN bi_data_storage bds
 		ON bdb.year = bds.year
