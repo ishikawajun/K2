@@ -34,13 +34,21 @@ accountMasterStore.getAccountMastergetFunc()
 
 watchEffect(
     (): void => {
+
         const thisDate = new Date(thisYear, thisMonth)
         const selectedDate = new Date(year.value, month.value)
-        if (selectedDate >= thisDate) {
+
+
+        if (selectedDate > thisDate) {
             const accountMaster = accountMasterStore.accountMaster
             budgetStore.setFuturData(accountMaster)
-        } else {
-            budgetStore.getBudgetFunc(year.value, month.value)
+            return
+        }
+
+        budgetStore.getBudgetFunc(year.value, month.value)
+        const sumAmount = budgetStore.budget.reduce((acc, value) => acc + value.amount, 0)
+        if (sumAmount === 0) {
+            budgetStore.setFuturData(accountMasterStore.accountMaster)
         }
     }
 )
