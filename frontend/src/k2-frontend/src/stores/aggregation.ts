@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { AggregationType } from './interface'
+import type { AggregationType } from './interface'
 import axios from 'axios'
 
 interface State {
@@ -9,25 +9,31 @@ interface State {
 
 export const aggregation = defineStore({
     id: "aggregation",
-    state: (): State => {
-        return {
-            aggregation: {
-                budget: 0,
-                consum: 0,
-                balance: 0
-            },
-            isLoading: true
-        };
-    },
-    getters: {
-
-    },
+    state: (): State => ({
+        aggregation: {
+            budget: 0,
+            consum: 0,
+            balance: 0
+        },
+        isLoading: false
+    }),
     actions: {
         async getAggregationFunc(year: number, month: number) {
-            const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/aggregation?year=${year}&month=${month}`
-            const response = await axios.get(url)
-            this.aggregation = response.data
-            this.isLoading = false
+            this.isLoading = true
+            try {
+                const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/aggregation?year=${year}&month=${month}`
+                const { data } = await axios.get<AggregationType>(url)
+                this.aggregation = data
+            } catch (error) {
+                this.aggregation = {
+                    budget: 0,
+                    consum: 0,
+                    balance: 0
+                }
+                console.error(error)
+            } finally {
+                this.isLoading = false
+            }
         }
     }
 })

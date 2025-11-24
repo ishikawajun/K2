@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
-import { AccountMaster } from './interface'
-import { Ref, ref } from 'vue';
+import type { AccountMaster } from './interface'
 import axios from 'axios'
 
+interface AccountMasterResponse {
+    account_data: AccountMaster[]
+}
+
 interface AccountMasterState {
-    accountMaster: Ref<AccountMaster[]>;
-    isLoading: Ref<boolean>;
-    postMessage: Ref<string>;
+    accountMaster: AccountMaster[]
+    isLoading: boolean
+    postMessage: string
 }
 
 interface PostAccoutMaster {
@@ -14,25 +17,31 @@ interface PostAccoutMaster {
 }
 
 export const master = defineStore({
-    id: "accountMaster",
-    state: (): AccountMasterState => {
-        return {
-            accountMaster: ref([]),
-            isLoading: ref(true),
-            postMessage: ref("")
-        };
-    },
-    getters: {
-
-    },
+    id: 'accountMaster',
+    state: (): AccountMasterState => ({
+        accountMaster: [],
+        isLoading: false,
+        postMessage: ''
+    }),
     actions: {
+        async getAccountMasterFunc() {
+            this.isLoading = true
+            try {
+                const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/account_master`
+                const { data } = await axios.get<AccountMasterResponse>(url)
+                this.accountMaster = data.account_data ?? []
+            } catch (error) {
+                this.accountMaster = []
+                console.error(error)
+            } finally {
+                this.isLoading = false
+            }
+        },
         async getAccountMastergetFunc() {
-            const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/account_master`
-            const response = await axios.get(url)
-            this.accountMaster = response.data.account_data
-            this.isLoading = false
+            await this.getAccountMasterFunc()
         },
         async postAccountMasterFunc() {
+            this.postMessage = ''
             try {
                 const postAcountMaster: PostAccoutMaster = { account_data: [] }
                 for (const masterData of this.accountMaster) {
@@ -44,15 +53,19 @@ export const master = defineStore({
                         masterData.isEdit = false
                     }
                 }
-                const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/account_master`
-                const response = await axios.post(url, postAcountMaster)
-                this.postMessage = String(response.status)
-            } catch (e) {
-                if (axios.isAxiosError(e)) {
-                    this.postMessage = e.message
-                } else {
-                    this.postMessage = String(e)
+                if (!postAcountMaster.account_data.length) {
+                    return
                 }
+                const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/account_master`
+                const { status } = await axios.post(url, postAcountMaster)
+                this.postMessage = String(status)
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    this.postMessage = error.message
+                } else {
+                    this.postMessage = String(error)
+                }
+                console.error(error)
             }
         }
     }

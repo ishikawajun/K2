@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { FwbSpinner, FwbCheckbox } from 'flowbite-vue'
 import { present } from '../../stores/present'
+import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 
 const presentStore = present()
-presentStore.getPresentFunc()
+const { isLoading, presents } = storeToRefs(presentStore)
 
+onMounted(() => {
+    presentStore.getPresentFunc()
+})
 </script>
 
 <template>
@@ -27,8 +32,8 @@ presentStore.getPresentFunc()
                 </tr>
             </thead>
             <tbody>
-                <FwbSpinner v-if="presentStore.isLoading" size="12" />
-                <tr v-else v-for="present, i in presentStore.presents"
+                <FwbSpinner v-if="isLoading" size="12" />
+                <tr v-else v-for="present, i in presents"
                     :class="{ 'bg-white border-b': i % 2 === 0, 'bg-gray-50 border-b': i % 2 !== 0 }"
                     :key="present.depositDate">
                     <td class="px-6 py-4">

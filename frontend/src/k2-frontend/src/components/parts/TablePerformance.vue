@@ -1,39 +1,20 @@
 <script setup lang="ts">
 import { performance } from '../../stores/performance'
-import type { Performance } from '../../stores/interface';
-import { computed, watchEffect } from 'vue'
+import { watch } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
 import { formatMoney } from '../../util/utility'
+import { storeToRefs } from 'pinia'
 
 const dateStore = date()
-const year = computed(
-    (): number => {
-        return dateStore.year
-    }
-)
-const month = computed(
-    (): number => {
-        return dateStore.month
-    }
-)
+const { year, month } = storeToRefs(dateStore)
 
 const performanceStore = performance()
-watchEffect(
-    (): void => {
-        performanceStore.getPerformanceFunc(year.value, month.value)
-    }
-)
-const isLoading = computed(
-    (): boolean => {
-        return performanceStore.isLoading
-    }
-)
-const getPerformance = computed(
-    (): Performance[] => {
-        return performanceStore.performance
-    }
-)
+const { performance: performanceRows, isLoading } = storeToRefs(performanceStore)
+
+watch([year, month], ([selectedYear, selectedMonth]) => {
+    performanceStore.getPerformanceFunc(selectedYear, selectedMonth)
+}, { immediate: true })
 
 </script>
 
@@ -55,7 +36,7 @@ const getPerformance = computed(
             </thead>
             <tbody>
                 <FwbSpinner v-if="isLoading" size="12" />
-                <tr v-else v-for="performance, i in getPerformance"
+                <tr v-else v-for="performance, i in performanceRows"
                     :class="{ 'bg-white border-b': i % 2 === 0, 'bg-gray-50 border-b': i % 2 !== 0 }"
                     :key="performance.account">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">

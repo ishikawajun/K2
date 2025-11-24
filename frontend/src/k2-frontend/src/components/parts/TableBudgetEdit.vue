@@ -1,63 +1,60 @@
 <script setup lang="ts">
 import { budget } from '../../stores/budget'
 import { master } from '../../stores/accountMaster'
-import type { Budget } from '../../stores/interface'
-import { computed, watchEffect } from 'vue'
+import { computed, watch } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
-
+import { storeToRefs } from 'pinia'
 
 const dateStore = date()
-const year = computed(
-    (): number => {
-        return dateStore.year
-    }
-)
-const month = computed(
-    (): number => {
-        return dateStore.month
-    }
-)
-
-const thisDate = new Date
-const thisYear = thisDate.getFullYear()
-const thisMonth = thisDate.getMonth() + 1
+const { year, month } = storeToRefs(dateStore)
 
 const budgetStore = budget()
+const { budget: budgets, isLoading } = storeToRefs(budgetStore)
+
 const accountMasterStore = master()
-const getBudget = computed(
-    (): Budget[] => {
-        return budgetStore.budget
+const { accountMaster } = storeToRefs(accountMasterStore)
+
+const currentMonth = new Date()
+const currentMonthFloor = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
+
+const ensureAccountMasterLoaded = async () => {
+    if (!accountMaster.value.length) {
+        await accountMasterStore.getAccountMasterFunc()
     }
-)
-accountMasterStore.getAccountMastergetFunc()
+}
 
-watchEffect(
-    (): void => {
+const isFutureMonth = (targetYear: number, targetMonth: number) => {
+    const selectedMonth = new Date(targetYear, targetMonth - 1, 1)
+    return selectedMonth > currentMonthFloor
+}
 
-        const thisDate = new Date(thisYear, thisMonth)
-        const selectedDate = new Date(year.value, month.value)
-
-
-        if (selectedDate > thisDate) {
-            const accountMaster = accountMasterStore.accountMaster
-            budgetStore.setFuturData(accountMaster)
-            return
-        }
-
-        budgetStore.getBudgetFunc(year.value, month.value)
-        const sumAmount = budgetStore.budget.reduce((acc, value) => acc + value.amount, 0)
-        if (sumAmount === 0) {
-            budgetStore.setFuturData(accountMasterStore.accountMaster)
-        }
+const setFutureBudget = () => {
+    if (accountMaster.value.length) {
+        budgetStore.setFutureData(accountMaster.value)
     }
-)
-const isLoading = computed(
-    (): boolean => {
-        return budgetStore.isLoading
-    }
-)
+}
 
+const loadBudget = async (targetYear: number, targetMonth: number) => {
+    await ensureAccountMasterLoaded()
+    if (!accountMaster.value.length) {
+        return
+    }
+    if (isFutureMonth(targetYear, targetMonth)) {
+        setFutureBudget()
+        return
+    }
+    await budgetStore.getBudgetFunc(targetYear, targetMonth)
+    if (!budgetStore.budget.length) {
+        setFutureBudget()
+    }
+}
+
+watch([year, month], async ([selectedYear, selectedMonth]) => {
+    await loadBudget(selectedYear, selectedMonth)
+}, { immediate: true })
+
+const getBudget = computed(() => budgets.value)
 
 </script>
 

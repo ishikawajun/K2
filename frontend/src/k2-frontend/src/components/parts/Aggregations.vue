@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Card from '../parts/Card.vue'
-import { aggregation } from '../../stores/aggregation';
-import { budget } from '../../stores/budget';
-import type { AggregationType, Budget } from '../../stores/interface'
-import { computed, watchEffect, ref } from 'vue'
+import { aggregation } from '../../stores/aggregation'
+import { budget } from '../../stores/budget'
+import { computed, watch } from 'vue'
 import { FwbSpinner } from 'flowbite-vue'
 import { date } from '../../stores/date'
+import { storeToRefs } from 'pinia'
 
 interface Props {
     isEdit?: boolean
@@ -17,57 +17,24 @@ const props = withDefaults(
 )
 
 const dateStore = date()
-const year = computed(
-    (): number => {
-        return dateStore.year
-    }
-)
-const month = computed(
-    (): number => {
-        return dateStore.month
-    }
-)
+const { year, month } = storeToRefs(dateStore)
 
 const aggregationStore = aggregation()
+const { aggregation: aggregationData, isLoading } = storeToRefs(aggregationStore)
+
+watch([year, month], ([selectedYear, selectedMonth]) => {
+    aggregationStore.getAggregationFunc(selectedYear, selectedMonth)
+}, { immediate: true })
+
 const budgetStore = budget()
-const editBudget = computed(
-    (): Budget[] => {
-        return budgetStore.budget
-    }
-)
+const { budget: editableBudget } = storeToRefs(budgetStore)
 
-watchEffect(
-    (): void => {
-        aggregationStore.getAggregationFunc(year.value, month.value)
+const budgetAmount = computed(() => {
+    if (!props.isEdit) {
+        return 0
     }
-)
-const isLoading = computed(
-    (): boolean => {
-        return aggregationStore.isLoading
-    }
-)
-const getAggregation = computed(
-    (): AggregationType => {
-        return aggregationStore.aggregation
-    }
-
-)
-
-const budgetAmount = ref(0)
-if (props.isEdit) {
-    watchEffect((): void => {
-        let aggre = 0
-        if(editBudget.value) {
-        for (const item of editBudget.value) {
-            aggre += Number(item.amount)
-        }
-        budgetAmount.value = aggre
-    }
-    }
-    )
-}
-
-
+    return editableBudget.value.reduce((total, item) => total + Number(item.amount ?? 0), 0)
+})
 </script>
 
 <template>
@@ -75,15 +42,15 @@ if (props.isEdit) {
         <div class="py-5">
             <FwbSpinner v-if="isLoading" size="8" />
             <Card v-else-if="isEdit" title="予算金額" :content="budgetAmount" />
-            <Card v-else title="予算金額" :content="getAggregation.budget" />
+            <Card v-else title="予算金額" :content="aggregationData.budget" />
         </div>
         <div class="py-5">
             <FwbSpinner v-if="isLoading" size="8" />
-            <Card v-else title="消費金額" :content="getAggregation.consum" />
+            <Card v-else title="消費金額" :content="aggregationData.consum" />
         </div>
         <div class="py-5">
             <FwbSpinner v-if="isLoading" size="8" />
-            <Card v-else title="予算残高" :content="getAggregation.balance" />
+            <Card v-else title="予算残高" :content="aggregationData.balance" />
         </div>
     </div>
 </template>

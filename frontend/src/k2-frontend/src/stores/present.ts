@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia'
-import { PresentData } from './interface'
+import type { PresentData } from './interface'
 import axios from 'axios'
-import { Ref, ref } from 'vue'
 
 interface State {
-    aggregation: Ref<number>
-    presents: Ref<PresentData[]>
-    isLoading: Ref<boolean>
-    postMessage: Ref<string>
+    aggregation: number
+    presents: PresentData[]
+    isLoading: boolean
+    postMessage: string
 }
 
 interface GetPresentResponse {
@@ -21,26 +20,30 @@ interface PostPresentRequest {
 
 export const present = defineStore({
     id: "present",
-    state: (): State => {
-        return {
-            aggregation: ref(0),
-            presents: ref<PresentData[]>([]),
-            isLoading: ref(true),
-            postMessage: ref(""),
-        };
-    },
-    getters: {
-
-    },
+    state: (): State => ({
+        aggregation: 0,
+        presents: [],
+        isLoading: false,
+        postMessage: "",
+    }),
     actions: {
         async getPresentFunc() {
-            const url = `/proxy/present`
-            const response: GetPresentResponse = (await axios.get(url)).data
-            this.presents = response.presentData
-            this.aggregation = response.aggregation
-            this.isLoading = false
+            this.isLoading = true
+            try {
+                const url = `/proxy/present`
+                const { data } = await axios.get<GetPresentResponse>(url)
+                this.presents = data.presentData ?? []
+                this.aggregation = data.aggregation ?? 0
+            } catch (error) {
+                this.presents = []
+                this.aggregation = 0
+                console.error(error)
+            } finally {
+                this.isLoading = false
+            }
         },
         async putPresentFunc() {
+            this.postMessage = ""
             try {
                 const postPresentRequest: PostPresentRequest = { presentData: [] }
                 for (const present of this.presents) {
@@ -53,15 +56,19 @@ export const present = defineStore({
                         present.isEdit = false
                     }
                 }
-                const url = `/proxy/present`
-                const response = await axios.put(url, postPresentRequest)
-                this.postMessage = String(response.status)
-            } catch (e) {
-                if (axios.isAxiosError(e)) {
-                    this.postMessage = e.message
-                } else {
-                    this.postMessage = String(e)
+                if (!postPresentRequest.presentData.length) {
+                    return
                 }
+                const url = `/proxy/present`
+                const { status } = await axios.put(url, postPresentRequest)
+                this.postMessage = String(status)
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    this.postMessage = error.message
+                } else {
+                    this.postMessage = String(error)
+                }
+                console.error(error)
             }
         }
     },
