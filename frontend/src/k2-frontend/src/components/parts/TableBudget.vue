@@ -13,6 +13,7 @@ const budgetStore = budget()
 const { budget: budgets, isLoading } = storeToRefs(budgetStore)
 
 watch([year, month], ([selectedYear, selectedMonth]) => {
+    console.log('watch', selectedYear, selectedMonth)
     budgetStore.getBudgetFunc(selectedYear, selectedMonth)
 }, { immediate: true })
 

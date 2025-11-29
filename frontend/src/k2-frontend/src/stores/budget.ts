@@ -15,20 +15,30 @@ interface PostData {
     amount: number
 }
 
-export const budget = defineStore({
-    id: 'budget',
+export const budget = defineStore('budget', {
     state: (): State => ({
         budget: [],
         isLoading: false,
         postMessage: ''
     }),
     actions: {
-        async getBudgetFunc(year: number, month: number) {
+        async getBudgetFunc(year: number, month: number, accountMaster?: AccountMaster[]) {
             this.isLoading = true
             try {
                 const url = `http://${import.meta.env.VITE_BACKEND_URI}:60001/budget?year=${year}&month=${month}`
                 const { data } = await axios.get<Budget[]>(url)
                 this.budget = data ?? []
+                if (accountMaster) {
+                    accountMaster.forEach((master) => {
+                        if (this.budget.find((budget) => budget.account === master.account_jp)) {
+                            return
+                        }
+                        this.budget.push({
+                            account: master.account_jp,
+                            amount: 0
+                        })
+                    })
+                }
             } catch (error) {
                 this.budget = []
                 console.error(error)

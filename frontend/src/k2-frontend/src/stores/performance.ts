@@ -7,8 +7,7 @@ interface State {
     isLoading: boolean;
 }
 
-export const performance = defineStore({
-    id: "performance",
+export const performance = defineStore("performance", {
     state: (): State => ({
         performance: [],
         isLoading: false

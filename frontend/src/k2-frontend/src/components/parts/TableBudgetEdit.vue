@@ -13,45 +13,13 @@ const budgetStore = budget()
 const { budget: budgets, isLoading } = storeToRefs(budgetStore)
 
 const accountMasterStore = master()
-const { accountMaster } = storeToRefs(accountMasterStore)
 
 const currentMonth = new Date()
 const currentMonthFloor = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
 
-const ensureAccountMasterLoaded = async () => {
-    if (!accountMaster.value.length) {
-        await accountMasterStore.getAccountMasterFunc()
-    }
-}
-
-const isFutureMonth = (targetYear: number, targetMonth: number) => {
-    const selectedMonth = new Date(targetYear, targetMonth - 1, 1)
-    return selectedMonth > currentMonthFloor
-}
-
-const setFutureBudget = () => {
-    if (accountMaster.value.length) {
-        budgetStore.setFutureData(accountMaster.value)
-    }
-}
-
-const loadBudget = async (targetYear: number, targetMonth: number) => {
-    await ensureAccountMasterLoaded()
-    if (!accountMaster.value.length) {
-        return
-    }
-    if (isFutureMonth(targetYear, targetMonth)) {
-        setFutureBudget()
-        return
-    }
-    await budgetStore.getBudgetFunc(targetYear, targetMonth)
-    if (!budgetStore.budget.length) {
-        setFutureBudget()
-    }
-}
-
 watch([year, month], async ([selectedYear, selectedMonth]) => {
-    await loadBudget(selectedYear, selectedMonth)
+    accountMasterStore.getAccountMasterFunc()
+    await budgetStore.getBudgetFunc(selectedYear, selectedMonth, accountMasterStore.accountMaster)
 }, { immediate: true })
 
 const getBudget = computed(() => budgets.value)

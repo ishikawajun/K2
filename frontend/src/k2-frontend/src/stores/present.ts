@@ -18,8 +18,7 @@ interface PostPresentRequest {
     presentData: PresentData[]
 }
 
-export const present = defineStore({
-    id: "present",
+export const present = defineStore("present", {
     state: (): State => ({
         aggregation: 0,
         presents: [],

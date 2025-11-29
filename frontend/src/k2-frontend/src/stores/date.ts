@@ -5,8 +5,7 @@ interface State {
     month: number
 }
 
-export const date = defineStore({
-    id: "date",
+export const date = defineStore("date", {
     state: (): State => {
         const date = new Date
         return {

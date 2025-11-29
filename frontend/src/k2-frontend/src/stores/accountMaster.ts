@@ -16,8 +16,7 @@ interface PostAccoutMaster {
     account_data: AccountMaster[]
 }
 
-export const master = defineStore({
-    id: 'accountMaster',
+export const master = defineStore('accountMaster', {
     state: (): AccountMasterState => ({
         accountMaster: [],
         isLoading: false,

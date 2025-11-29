@@ -10,20 +10,10 @@ import { budget } from '../../stores/budget'
 import { FwbAlert } from 'flowbite-vue'
 
 const dateStore = date()
-const year = computed(
-    (): number => {
-        return dateStore.year
-    }
-)
-const month = computed(
-    (): number => {
-        return dateStore.month
-    }
-)
 
 const budgetStore = budget()
 const postBudget = (): void => {
-    budgetStore.postBudgetFunc(year.value, month.value)
+    budgetStore.postBudgetFunc(dateStore.year, dateStore.month)
 }
 
 const postMessage = computed(
@@ -49,14 +39,14 @@ const onClose = (): void => {
         </div>
         <div class="flex flex-row flex-wrap">
             <div class="p-3 overflow-x-auto">
-                <h2 class="p-2 text-xl font-medium mb-4">{{ year }}年{{ month }}月 予算表</h2>
+                <h2 class="p-2 text-xl font-medium mb-4">{{ dateStore.year }}年{{ dateStore.month }}月 予算表</h2>
                 <TableBudgetEdit />
                 <div class="p-2">
                     <Modal v-on:postAccountData="postBudget">Submit</Modal>
                 </div>
             </div>
             <div class="p-3 overflow-x-auto">
-                <h2 class="p-2 text-xl font-medium mb-4">{{ year }}年{{ month }}月 実績表</h2>
+                <h2 class="p-2 text-xl font-medium mb-4">{{ dateStore.year }}年{{ dateStore.month }}月 実績表</h2>
                 <TablePerformance />
             </div>
         </div>

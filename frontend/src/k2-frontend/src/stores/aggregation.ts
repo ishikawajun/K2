@@ -7,8 +7,7 @@ interface State {
     isLoading: boolean
 }
 
-export const aggregation = defineStore({
-    id: "aggregation",
+export const aggregation = defineStore("aggregation", {
     state: (): State => ({
         aggregation: {
             budget: 0,
